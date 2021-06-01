@@ -1,0 +1,52 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    compileSdkVersion 30
+
+    defaultConfig {
+        /*applicationId "com.android.libs.ext"*/
+        minSdkVersion 19
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+task clearJar(type: Delete) {
+    delete 'D://libs/utilsExt.jar'////这行表示如果你已经打过一次包了，再进行打包则把原来的包删掉
+}
+
+task makeJar(type: Copy) {
+    from('build/intermediates/aar_main_jar/release') //这行表示要打包的文件的路径，根据下面的内容，其实是该路径下的classes.jar
+//    into('build/libs/')  //这行表示打包完毕后包的生成路径，也就是生成的包存在哪
+    //into('/ccy/AndroidApp/Treadmill_new/plugin/exportLib')
+    into('D://libs')
+    include('classes.jar')  //看到这行，如果你对分包有了解的话，你就可以看出来这行它只是将一些类打包了
+    rename ('classes.jar', 'utilsExt.jar')
+}
+
+makeJar.dependsOn(clearJar, build)
+
+dependencies {
+
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.2.1'
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+}
